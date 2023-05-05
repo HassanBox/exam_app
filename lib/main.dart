@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_question.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 AppQuestion appQuestion = AppQuestion();
 
@@ -47,64 +48,84 @@ class ExamPage extends StatefulWidget {
 class _ExamPageState extends State<ExamPage> {
   List<Widget> answerResult = [];
 
+  // void song() {
+  //   final player = AudioPlayer();
+  //   player.play(
+  //     AssetSource('1.mp3'),
+  //   );
+  // }
+
   int rightAnswer = 0;
 
   void checkAnswer(bool userChoice) {
     bool correctAnswer = appQuestion.getQuestionAnswe();
-    setState(() {
-      if (userChoice == correctAnswer) {
-        rightAnswer++;
-        answerResult.add(
-          const Padding(
-            padding: EdgeInsets.only(right: 5.0),
-            child: Icon(
-              Icons.thumb_up,
-              color: Colors.green,
-            ),
-          ),
-        );
-      } else {
-        answerResult.add(
-          const Padding(
-            padding: EdgeInsets.only(right: 5.0),
-            child: Icon(
-              Icons.thumb_down,
-              color: Colors.red,
-            ),
-          ),
-        );
-      }
-      if (appQuestion.examEnd() == true) {
-        Alert(
-          context: context,
-          type: AlertType.error,
-          title: 'End Exam',
-          desc: 'the right answers $rightAnswer from 7',
-          buttons: [
-            DialogButton(
-              onPressed: () => Navigator.pop(context),
-              width: 125,
-              child: const Text(
-                'Play again',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+    setState(
+      () {
+        if (userChoice == correctAnswer) {
+          rightAnswer++;
+          answerResult.add(
+            const Padding(
+              padding: EdgeInsets.only(right: 5.0),
+              child: Icon(
+                Icons.heat_pump_rounded,
+                color: Colors.green,
               ),
             ),
-          ],
-        ).show();
+          );
+          final player = AudioPlayer();
+          player.play(
+            AssetSource('1.mp3'),
+          );
+        } else {
+          answerResult.add(
+            const Padding(
+              padding: EdgeInsets.only(right: 5.0),
+              child: Icon(
+                Icons.thumb_down,
+                color: Colors.red,
+              ),
+            ),
+          );
+          final player = AudioPlayer();
+          player.play(
+            AssetSource('4.mp3'),
+          );
+        }
+        if (appQuestion.examEnd() == true) {
+          Alert(
+            context: context,
+            type: AlertType.info,
+            title: 'End Exam',
+            desc: 'the right answers $rightAnswer from 7',
+            buttons: [
+              DialogButton(
+                onPressed: () => Navigator.pop(context),
+                width: 125,
+                child: const Text(
+                  'Play again',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ).show();
 
-        appQuestion.restExam();
+          final player = AudioPlayer();
+          player.play(AssetSource('magical.mp3'));
 
-        answerResult = [];
+          appQuestion.restExam();
 
-        rightAnswer = 0;
-      } else {
-        appQuestion.nextQuestion();
-      }
-    });
+          answerResult = [];
+
+          rightAnswer = 0;
+        } else {
+          appQuestion.nextQuestion();
+        }
+      },
+    );
   }
 
   @override
